@@ -18,5 +18,4 @@ class User(Base):
 
     is_active = Column(Boolean, default=True)
 
-    # ✅ ADD THIS RELATIONSHIP
     role = relationship("Role", backref="user")

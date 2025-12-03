@@ -24,9 +24,9 @@ class UserLogin(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
-    token_type: str
+    token_type: str = "bearer"
     user_role: Optional[str] = None   # make optional if you want to be lenient
-    user_name: Optional[str] = None   # make optional if you want to be lenient
+    user_name: str 
     user_id: int
 
 

@@ -130,7 +130,8 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
         access_token=token,
         token_type="bearer",
         user_role=role_name,
-        user_id=user.user_id
+        user_id=user.user_id,
+        user_name=user.username
     )
 
 
