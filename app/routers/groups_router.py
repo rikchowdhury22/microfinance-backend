@@ -12,9 +12,11 @@ router = APIRouter(prefix="/groups", tags=["Groups"])
 # CREATE GROUP
 # --------------------------------------
 @router.post("/", response_model=GroupOut)
-def create_group(payload: GroupCreate, 
-                 db: Session = Depends(get_db), 
-                 user: dict = Depends(get_current_user)):
+def create_group(
+    payload: GroupCreate,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
 
     # Admin → allowed
     # RM → region match only
@@ -23,7 +25,9 @@ def create_group(payload: GroupCreate,
 
     if user["role"] == "loan_officer":
         if payload.lo_id != user["user_id"]:
-            raise HTTPException(403, "Loan Officer can create groups only for themselves")
+            raise HTTPException(
+                403, "Loan Officer can create groups only for themselves"
+            )
 
     if user["role"] == "branch_manager":
         if payload.branch_id != user["branch_id"]:
@@ -40,7 +44,7 @@ def create_group(payload: GroupCreate,
         lo_id=payload.lo_id,
         region_id=payload.region_id,
         branch_id=payload.branch_id,
-        meeting_day=payload.meeting_day
+        meeting_day=payload.meeting_day,
     )
 
     db.add(new_group)
@@ -54,8 +58,7 @@ def create_group(payload: GroupCreate,
 # LIST GROUPS
 # --------------------------------------
 @router.get("/", response_model=list[GroupOut])
-def list_groups(db: Session = Depends(get_db), 
-                user: dict = Depends(get_current_user)):
+def list_groups(db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
 
     q = db.query(group_model)
 
@@ -75,9 +78,9 @@ def list_groups(db: Session = Depends(get_db),
 # GROUP DETAILS
 # --------------------------------------
 @router.get("/{group_id}", response_model=GroupOut)
-def get_group(group_id: int, 
-              db: Session = Depends(get_db),
-              user: dict = Depends(get_current_user)):
+def get_group(
+    group_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)
+):
 
     group = db.query(group_model).filter(group_model.group_id == group_id).first()
 

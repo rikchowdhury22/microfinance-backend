@@ -1,6 +1,8 @@
+# app/models/user.py
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from app.utils.database import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -18,4 +20,5 @@ class User(Base):
 
     is_active = Column(Boolean, default=True)
 
-    role = relationship("Role", backref="user")
+    # ✅ Proper relationship to Role
+    role = relationship("Role", back_populates="users")
