@@ -1,6 +1,7 @@
-# app/models/user.py
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+# app/models/user_model.py
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.orm import relationship
+from datetime import datetime
 from app.utils.database import Base
 
 
@@ -9,16 +10,9 @@ class User(Base):
 
     user_id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), unique=True, nullable=False)
-    full_name = Column(String(150), nullable=False)
     email = Column(String(150), unique=True, nullable=False)
-    phone = Column(String(20))
     password = Column(String(200), nullable=False)
-
-    role_id = Column(Integer, ForeignKey("roles.id"))
-    region_id = Column(Integer, ForeignKey("regions.region_id"), nullable=True)
-    branch_id = Column(Integer, ForeignKey("branches.branch_id"), nullable=True)
-
     is_active = Column(Boolean, default=True)
+    created_on = Column(DateTime, default=datetime.utcnow)
 
-    # ✅ Proper relationship to Role
-    role = relationship("Role", back_populates="users")
+    employee = relationship("Employee", back_populates="user", uselist=False)

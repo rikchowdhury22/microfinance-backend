@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.utils.database import get_db
-from app.models import group_model, loan_officers, user_model
+from app.models import group_model, loan_officer_model, user_model
 from app.utils.schemas import GroupCreate, GroupOut
 from app.utils.auth import get_current_user
 

@@ -1,21 +1,36 @@
-from pydantic import BaseModel, EmailStr
+# app/utils/schemas.py
+
+from __future__ import annotations
+
+from datetime import date, datetime
 from typing import Optional
 
+from pydantic import BaseModel
+
+
+# =====================================
+# AUTH + EMPLOYEE SCHEMAS
+# =====================================
+
 class UserCreate(BaseModel):
+    # Auth
     username: str
+    email: str
+    password: str  # plain text as per your current requirement
+
+    # Employee profile
     full_name: str
-    email: EmailStr
     phone: Optional[str] = None
-    password: str
 
-    # 🔹 Now we take role_id directly (int, FK to roles table)
     role_id: int
-
-    # These can be omitted / null safely
     region_id: Optional[int] = None
     branch_id: Optional[int] = None
-
     is_active: bool = True
+
+    employee_code: Optional[str] = None
+    date_joined: Optional[date] = None
+    notes: Optional[str] = None
+
 
 class UserLogin(BaseModel):
     username: str
@@ -24,45 +39,74 @@ class UserLogin(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
-    token_type: str = "bearer"
-    user_role: Optional[str] = None   # make optional if you want to be lenient
-    user_name: str 
+    token_type: str
+    user_role: Optional[str] = None
     user_id: int
+    user_name: str
 
 
-class GroupCreate(BaseModel):
+# =====================================
+# GROUP SCHEMAS
+#   (matches SQL: groups table)
+# =====================================
+
+class GroupBase(BaseModel):
     group_name: str
     lo_id: int
-    region_id: int
-    branch_id: int
-    meeting_day: Optional[str] = None
+    region_id: Optional[int] = None
+    branch_id: Optional[int] = None
+    meeting_day: Optional[str] = None  # e.g., "Monday", "Tuesday"
 
 
-class GroupOut(BaseModel):
+class GroupCreate(GroupBase):
+    """
+    Used for POST /groups
+    """
+    pass
+
+
+class GroupOut(GroupBase):
+    """
+    Used for response models in groups_router
+    """
     group_id: int
-    group_name: str
-    lo_id: int
-    region_id: int
-    branch_id: int
-    meeting_day: Optional[str]
+    created_on: datetime
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # for ORM mode (SQLAlchemy objects)
 
 
-class MemberCreate(BaseModel):
+# =====================================
+# MEMBER SCHEMAS
+#   (matches SQL: members table)
+# =====================================
+
+class MemberBase(BaseModel):
     full_name: str
     phone: Optional[str] = None
     address: Optional[str] = None
-    group_id: int
+
+    group_id: Optional[int] = None
+    lo_id: Optional[int] = None
+    branch_id: Optional[int] = None
+    region_id: Optional[int] = None
+
+    is_active: bool = True
 
 
-class MemberOut(BaseModel):
+class MemberCreate(MemberBase):
+    """
+    Used for POST /members
+    """
+    pass
+
+
+class MemberOut(MemberBase):
+    """
+    Used for response models in members_router
+    """
     member_id: int
-    full_name: str
-    phone: Optional[str]
-    address: Optional[str]
-    group_id: int
+    created_on: datetime
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # for ORM mode
