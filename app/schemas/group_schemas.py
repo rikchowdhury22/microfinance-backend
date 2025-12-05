@@ -19,7 +19,7 @@ class GroupCreate(GroupBase):
 
 class GroupOut(GroupBase):
     group_id: int
-    created_on: datetime
+    created_on: datetime  # ✅ now backed by the model column
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # for Pydantic ORM mode

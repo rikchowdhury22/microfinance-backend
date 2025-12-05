@@ -2,7 +2,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.utils.database import engine, Base
-from app.routers import auth_router, groups_router, members_router, branches_router, regions_router
+from app.routers import (
+    auth_router,
+    groups_router,
+    members_router,
+    branches_router,
+    regions_router,
+    loan_officers_router,
+)
 from app.initial_data import init_seed  # 👉 USE THIS instead of seed_roles()
 
 # --------------------------------------
@@ -50,6 +57,8 @@ app.include_router(regions_router.router)
 app.include_router(branches_router.router)
 app.include_router(groups_router.router)
 app.include_router(members_router.router)
+app.include_router(loan_officers_router.router)
+
 
 @app.get("/")
 def root():
