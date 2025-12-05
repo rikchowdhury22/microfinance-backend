@@ -1,8 +1,9 @@
 # app/schemas/group_schemas.py
 
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
+from app.schemas.member_schemas import MemberOut
 
 
 class GroupBase(BaseModel):
@@ -23,3 +24,13 @@ class GroupOut(GroupBase):
 
     class Config:
         from_attributes = True  # for Pydantic ORM mode
+
+class GroupSummaryOut(BaseModel):
+    group: GroupOut
+    members: List[MemberOut]
+    total_members: int
+    active_members: int
+    inactive_members: int
+
+    class Config:
+        from_attributes = True

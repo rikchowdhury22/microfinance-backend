@@ -11,6 +11,8 @@ from app.models.group_model import Group
 from app.models.loan_officer_model import LoanOfficer
 from app.utils.schemas import GroupCreate, GroupOut
 from app.utils.auth import get_current_user
+from app.schemas.group_schemas import GroupSummaryOut
+from app.models.member_model import Member
 
 router = APIRouter(prefix="/groups", tags=["Groups"])
 
@@ -249,3 +251,36 @@ def assign_loan_officer_to_groups(
         db.refresh(g)
 
     return groups
+
+
+# --------------------------------------
+# GROUP SUMMARY (GROUP + MEMBERS + COUNTS)
+# --------------------------------------
+@router.get("/{group_id}/summary", response_model=GroupSummaryOut)
+def get_group_summary(
+    group_id: int,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    # 1️⃣ Fetch group
+    group = db.query(Group).filter(Group.group_id == group_id).first()
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    # 2️⃣ RBAC check (reuse existing helper)
+    _ensure_can_access_group(user, group)
+
+    # 3️⃣ Fetch members of this group
+    members = db.query(Member).filter(Member.group_id == group_id).all()
+
+    total_members = len(members)
+    active_members = sum(1 for m in members if m.is_active)
+    inactive_members = total_members - active_members
+
+    return {
+        "group": group,
+        "members": members,
+        "total_members": total_members,
+        "active_members": active_members,
+        "inactive_members": inactive_members,
+    }
