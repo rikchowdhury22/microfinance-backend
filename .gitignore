@@ -24,3 +24,5 @@ Thumbs.db
 
 # Pytest cache
 .pytest_cache/
+/run_server.onefile-build/
+/dist/
