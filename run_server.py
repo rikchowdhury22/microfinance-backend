@@ -1,10 +1,14 @@
 # run_server.py
 import uvicorn
 
+# ⬇️ IMPORTANT: this makes Nuitka see and bundle main.py
+from main import app
+
 
 def main():
+    # Pass the app object directly (no "main:app" string)
     uvicorn.run(
-        "main:app",  # 🔁 change if your app is in another module
+        app,
         host="0.0.0.0",
         port=8000,
         reload=False,
